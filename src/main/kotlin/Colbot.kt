@@ -2,10 +2,14 @@ import com.mewna.catnip.Catnip
 import com.mewna.catnip.entity.impl.message.EmbedImpl
 import com.mewna.catnip.entity.user.Presence
 import com.mewna.catnip.shard.DiscordEvent
+import org.slf4j.LoggerFactory
+import java.io.File
 import kotlin.random.Random
 
 fun main(args: Array<String>) {
-    val colbot = Catnip.catnip("NzM4OTMwMzQ3NDA3OTY2MzA4.XyTEgw.BbPJeEBJFA3p24GJpRdOs8k4KBM")
+    val logger = LoggerFactory.getLogger("ColBot")
+    val token = File("token.txt").readText()
+    val colbot = Catnip.catnip("token")
     colbot.observable(DiscordEvent.MESSAGE_CREATE)
         .filter { it.content() == "<placeholder>" }
         .subscribe({ it.channel().sendMessage("<placeholder>") })
@@ -59,10 +63,11 @@ fun main(args: Array<String>) {
         }
     colbot.observable(DiscordEvent.MESSAGE_CREATE)
         .filter { it.content().startsWith("=embed") }
-        .subscribe { val fieldList = it.content()
-            .splitToSequence(' ')
-            .drop(1)
-            .map { word ->
+        .subscribe {
+            val fieldList = it.content()
+                .splitToSequence(' ')
+                .drop(1)
+                .map { word ->
                     EmbedImpl.FieldImpl.builder()
                         .name(word)
                         .value("[Search](https://www.google.com/search?q=$word)")
@@ -71,8 +76,8 @@ fun main(args: Array<String>) {
                 }
                 .toList()
             val embedObject = EmbedImpl.builder()
-                .title("Test embed")
-                .description("This is a test embed")
+                .title("")
+                .description("")
                 .fields(fieldList)
                 .build()
             it.channel().sendMessage(embedObject).subscribe({}, { err ->
