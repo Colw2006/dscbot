@@ -9,10 +9,10 @@ import kotlin.random.Random
 fun main(args: Array<String>) {
     val logger = LoggerFactory.getLogger("ColBot")
     val token = File("token.txt").readText()
-    val colbot = Catnip.catnip("token")
+    val colbot = Catnip.catnip(token)
     colbot.observable(DiscordEvent.MESSAGE_CREATE)
-        .filter { it.content() == "<placeholder>" }
-        .subscribe({ it.channel().sendMessage("<placeholder>") })
+            .filter { it.content() == "placeholder" }
+            .subscribe({ it.channel().sendMessage("placeholder") })
     colbot.observable(DiscordEvent.MESSAGE_CREATE)
         .filter { it.content() == "%flip" }
         .subscribe {
@@ -66,18 +66,41 @@ fun main(args: Array<String>) {
         .subscribe {
             val fieldList = it.content()
                 .splitToSequence(' ')
-                .drop(1)
-                .map { word ->
+                .drop(n = 1)
+                .map { pc ->
                     EmbedImpl.FieldImpl.builder()
-                        .name(word)
-                        .value("[Search](https://www.google.com/search?q=$word)")
+                        .name(pc)
+                        .value("[From Col_Bot:)](https://www.youtube.com./watch?v=DLzxrzFCyOs)")
                         .inline(true)
                         .build()
                 }
                 .toList()
             val embedObject = EmbedImpl.builder()
                 .title("")
-                .description("")
+                .description("[Message](https://www.youtube.com./watch?v=DLzxrzFCyOs)")
+                .fields(fieldList)
+                .build()
+            it.channel().sendMessage(embedObject).subscribe({}, { err ->
+                logger.error(err.message)
+            })
+        }
+    colbot.observable(DiscordEvent.MESSAGE_CREATE)
+        .filter { it.content().startsWith("=invite") }
+        .subscribe {
+            val fieldList = it.content()
+                .splitToSequence(' ')
+                .drop(n = 1)
+                .map { pc ->
+                    EmbedImpl.FieldImpl.builder()
+                        .name(pc)
+                        .value("")
+                        .inline(true)
+                        .build()
+                }
+                .toList()
+            val embedObject = EmbedImpl.builder()
+                .title("Invite me to your server!!")
+                .description("[Invite Link](https://discord.com/api/oauth2/authorize?client_id=738930347407966308&permissions=124992&scope=bot)")
                 .fields(fieldList)
                 .build()
             it.channel().sendMessage(embedObject).subscribe({}, { err ->
