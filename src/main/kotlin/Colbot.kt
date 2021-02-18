@@ -11,8 +11,8 @@ fun main(args: Array<String>) {
     val token = File("token.txt").readText()
     val colbot = Catnip.catnip(token)
     colbot.observable(DiscordEvent.MESSAGE_CREATE)
-            .filter { it.content() == "placeholder" }
-            .subscribe({ it.channel().sendMessage("placeholder") })
+            .filter { it.content() == "" }
+            .subscribe({ it.channel().sendMessage("") })
     colbot.observable(DiscordEvent.MESSAGE_CREATE)
         .filter { it.content() == "%flip" }
         .subscribe {
@@ -46,7 +46,7 @@ fun main(args: Array<String>) {
             colbot.game(params.joinToString(" "), Presence.ActivityType.STREAMING, "")
         }
     colbot.observable(DiscordEvent.MESSAGE_CREATE)
-        .filter { it.content().toLowerCase() == "~ping" }
+        .filter { it.content().toLowerCase() == "=ping" }
         .subscribe {
             val pongCommand = "pong!"
             val pingStart = System.nanoTime()
@@ -70,14 +70,14 @@ fun main(args: Array<String>) {
                 .map { pc ->
                     EmbedImpl.FieldImpl.builder()
                         .name(pc)
-                        .value("[From Col_Bot:)](https://www.youtube.com./watch?v=DLzxrzFCyOs)")
+                        .value("* *")
                         .inline(true)
                         .build()
                 }
                 .toList()
             val embedObject = EmbedImpl.builder()
                 .title("")
-                .description("[Message](https://www.youtube.com./watch?v=DLzxrzFCyOs)")
+                .description("")
                 .fields(fieldList)
                 .build()
             it.channel().sendMessage(embedObject).subscribe({}, { err ->
@@ -107,6 +107,14 @@ fun main(args: Array<String>) {
                 logger.error(err.message)
             })
         }
+    colbot.observable(DiscordEvent.MESSAGE_CREATE)
+            .filter { it.content() == "Leeroy Jenkins" }
+            .subscribe({ it.channel().sendMessage("LEEEEEERRROOOOYYY JEEENNNKKKIINNSS") })
+
+    colbot.observable(DiscordEvent.MESSAGE_CREATE)
+        .filter { it.content() == "=commands" }
+        .subscribe({ it.channel().sendMessage("") })
+
 
     colbot.connect()
 }
